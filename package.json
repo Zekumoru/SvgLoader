@@ -1,8 +1,8 @@
 {
-  "name": "svg-loader",
+  "name": "@zekumoru/svg-loader",
   "version": "1.0.0",
   "description": "An npm package to import in your JS file to inline replace svg-sourced img elements to svg elements.",
-  "main": "src/app.js",
+  "main": "index.js",
   "scripts": {
     "build": "webpack",
     "serve": "webpack serve",
