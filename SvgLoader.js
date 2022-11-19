@@ -46,6 +46,8 @@ function makeColorable(svg) {
     });
   };
 
+  if (svg.getAttribute('fill') !== 'none') svg.setAttribute('fill', 'currentColor');
+
   const paths = svg.querySelectorAll('path');
   const gs = svg.querySelectorAll('g');
 
