@@ -1,3 +1,3 @@
-module.exports = {
-  SvgLoader: require('./SvgLoader'),
-};
+const SvgLoader = require('./SvgLoader');
+
+module.exports = SvgLoader;
