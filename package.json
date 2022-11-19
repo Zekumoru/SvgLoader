@@ -12,8 +12,12 @@
     "type": "git",
     "url": "git+https://github.com/Zekumoru/SvgLoader.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "svg",
+    "webpack",
+    "svg-loader"
+  ],
+  "author": "Zekumoru Dragonhart <dev@zekumoru.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Zekumoru/SvgLoader/issues"
