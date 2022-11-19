@@ -20,6 +20,7 @@
     "no-new": "off",
     "consistent-return": "off",
     "max-len": "off",
-    "no-continue": "off"
+    "no-continue": "off",
+    "global-require": "off"
   }
 }
