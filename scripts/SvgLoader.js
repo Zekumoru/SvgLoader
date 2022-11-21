@@ -2,11 +2,19 @@ import axios from 'axios';
 
 export default {
   async load(url, attrs = {}) {
-    const svg = createSvg(await extractSvg(url));
-    Object.keys(attrs).forEach((key) => {
-      if (key === 'colorable' && attrs[key]) makeColorable(svg);
-      svg.setAttribute(key, attrs[key]);
-    });
+    let svg = createSvg(await extractSvg(url));
+
+    if (attrs.colorable) {
+      makeColorable(svg);
+      delete attrs.colorable;
+    }
+
+    if (Object.hasOwn(attrs, 'wrap')) {
+      svg = wrap(svg, attrs.wrap);
+      delete attrs.wrap;
+    }
+
+    Object.keys(attrs).forEach((key) => svg.setAttribute(key, attrs[key]));
     return svg;
   },
 };
@@ -15,24 +23,16 @@ const imgs = document.querySelectorAll('img[data-svg-load]');
 [...imgs].forEach(async (img) => {
   const url = simplifyPath(img.src);
 
-  const svg = createSvg(await extractSvg(url));
+  let svg = createSvg(await extractSvg(url));
   const options = extractOptions(img);
 
   const isColorable = img.dataset.svgColorable !== undefined || Object.hasOwn(options, 'colorable');
   if (isColorable) makeColorable(svg);
 
-  let element = svg;
-  if (Object.hasOwn(options, 'wrap')) {
-    const wrapper = document.createElement(options.wrap || 'div');
-    wrapper.appendChild(svg);
-    passAttributes(img, wrapper);
-    element = wrapper;
-  }
-  else {
-    passAttributes(img, svg);
-  }
+  if (Object.hasOwn(options, 'wrap')) svg = wrap(svg, options.wrap);
 
-  img.insertAdjacentElement('beforebegin', element);
+  passAttributes(img, svg);
+  img.insertAdjacentElement('beforebegin', svg);
   img.remove();
 });
 
@@ -86,6 +86,14 @@ function extractOptions(img) {
   });
 
   return options;
+}
+
+function wrap(svg, tag) {
+  if (typeof tag === 'boolean' && !tag) return svg;
+  if (typeof tag === 'boolean' && tag) tag = '';
+  const wrapper = document.createElement(tag || 'div');
+  wrapper.appendChild(svg);
+  return wrapper;
 }
 
 function passAttributes(from, to) {
