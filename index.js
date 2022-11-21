@@ -1,3 +1,3 @@
-const SvgLoader = require('./SvgLoader');
+const SvgLoader = require('./scripts/SvgLoader');
 
 module.exports = SvgLoader;
