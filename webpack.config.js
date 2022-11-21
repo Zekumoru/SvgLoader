@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -19,9 +20,15 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   devServer: {
-    static: {
-      directory: path.resolve(__dirname, 'dist'),
-    },
+    static: [
+      {
+        directory: path.resolve(__dirname, 'dist'),
+      },
+      {
+        directory: path.resolve(__dirname, 'src/images'),
+        publicPath: '/images',
+      },
+    ],
     watchFiles: [
       path.resolve(__dirname, 'src/*.html'),
     ],
@@ -51,6 +58,14 @@ module.exports = {
       title: 'Svg Loader',
       filename: 'index.html',
       template: path.resolve(__dirname, 'src/template.html'),
+    }),
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, 'src/images'),
+          to: 'images',
+        },
+      ],
     }),
   ],
 };
