@@ -21,14 +21,18 @@ const imgs = document.querySelectorAll('img[data-svg-load]');
   const isColorable = img.dataset.svgColorable !== undefined || Object.hasOwn(options, 'colorable');
   if (isColorable) makeColorable(svg);
 
-  [...img.attributes].forEach((attr) => {
-    attr = attr.name;
-    if (attr === 'src') return;
-    if (attr.startsWith('data-svg')) return;
-    svg.setAttribute(attr, img.getAttribute(attr));
-  });
+  let element = svg;
+  if (options.wrap) {
+    const wrapper = document.createElement(options.wrap);
+    wrapper.appendChild(svg);
+    passAttributes(img, wrapper);
+    element = wrapper;
+  }
+  else {
+    passAttributes(img, svg);
+  }
 
-  img.insertAdjacentElement('beforebegin', svg);
+  img.insertAdjacentElement('beforebegin', element);
   img.remove();
 });
 
@@ -84,13 +88,23 @@ function extractOptions(img) {
   return options;
 }
 
+function passAttributes(from, to) {
+  [...from.attributes].forEach((attr) => {
+    attr = attr.name;
+    if (attr === 'src') return;
+    if (attr.startsWith('data-svg')) return;
+    to.setAttribute(attr, from.getAttribute(attr));
+  });
+}
+
 async function extractSvg(url) {
   if (!url.endsWith('.svg')) url += '.svg';
 
   try {
     const { data } = await axios.get(url);
     return /<svg(.|\s)*<\/svg>/.exec(data)[0];
-  } catch (error) {
+  }
+  catch (error) {
     throw new Error(`Could not fetch ${url}`);
   }
 }
