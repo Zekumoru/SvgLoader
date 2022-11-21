@@ -22,8 +22,8 @@ const imgs = document.querySelectorAll('img[data-svg-load]');
   if (isColorable) makeColorable(svg);
 
   let element = svg;
-  if (options.wrap) {
-    const wrapper = document.createElement(options.wrap);
+  if (Object.hasOwn(options, 'wrap')) {
+    const wrapper = document.createElement(options.wrap || 'div');
     wrapper.appendChild(svg);
     passAttributes(img, wrapper);
     element = wrapper;
