@@ -16,7 +16,10 @@ const imgs = document.querySelectorAll('img[data-svg-load]');
   const url = simplifyPath(img.src);
 
   const svg = createSvg(await extractSvg(url));
-  if (img.dataset.svgColorable !== undefined) makeColorable(svg);
+  const options = extractOptions(img);
+
+  const isColorable = img.dataset.svgColorable !== undefined || Object.hasOwn(options, 'colorable');
+  if (isColorable) makeColorable(svg);
 
   [...img.attributes].forEach((attr) => {
     attr = attr.name;
@@ -65,6 +68,20 @@ function simplifyPath(path) {
     path = path.substring(0, ext);
   }
   return path;
+}
+
+function extractOptions(img) {
+  const raw = img.dataset.svgLoad;
+  const options = {};
+
+  raw.split(',').forEach((option) => {
+    let value;
+    [option, value] = option.split('=');
+
+    options[option.trim()] = value?.trim();
+  });
+
+  return options;
 }
 
 async function extractSvg(url) {
