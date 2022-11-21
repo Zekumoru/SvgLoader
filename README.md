@@ -13,7 +13,7 @@ SvgLoader also does not ignore any of the other attributes associated to the `<i
 HTML:
 
 ```html
-<img data-svg-load data-svg-colorable="true" src="images/logo.svg" class="logo" />
+<img data-svg-load="colorable, wrap" src="images/logo.svg" class="logo" />
 ```
 
 CSS:
@@ -29,15 +29,16 @@ CSS:
 JavaScript:
 
 ```js
-import '@zekumoru-dev/svg-loader/SvgLoader';
+import "@zekumoru-dev/svg-loader/SvgLoader";
 ```
 
 #### Loading svg
 
 ```js
-const svg = await SvgLoader.load('images/logo.svg', {
+const svg = await SvgLoader.load("images/logo.svg", {
+  class: "logo",
   colorable: true,
-  class: 'logo',
+  wrap: "div",
 });
 
 someElement.appendChild(svg);
@@ -117,13 +118,13 @@ module.exports = {
 Simply import SvgLoader and it will automatically find images attributed `data-svg-load` to process and inline replace them with their svg counterparts.
 
 ```js
-import SvgLoader from '@zekumoru-dev/svg-loader/SvgLoader';
+import SvgLoader from "@zekumoru-dev/svg-loader/SvgLoader";
 ```
 
 Or succintly:
 
 ```js
-import '@zekumoru-dev/svg-loader/SvgLoader';
+import "@zekumoru-dev/svg-loader/SvgLoader";
 ```
 
 <br>
@@ -138,9 +139,27 @@ import '@zekumoru-dev/svg-loader/SvgLoader';
 <img data-svg-load src="images/logo.svg" />
 ```
 
+Passing in options:
+
+```html
+<img data-svg-load="colorable, wrap=span" src="images/logo.svg" />
+```
+
 Marks the `<img>` for inline svg processing. If omitted, SvgLoader **will ignore** it.
 
-### data-svg-colorable
+#### Options
+
+<b>colorable</b>
+
+Makes the svg be able to be coloured using the `color` css property.
+
+<b>wrap</b>
+
+Wraps the svg inside a wrapper element. Default is `div`.
+
+### <s>data-svg-colorable</s> <strong style="color: firebrick;">deprecated</strong>
+
+_This attribute is deprecated as of version 1.1.0 in favor of the new options value for the `data-svg-load` attribute._
 
 ```html
 <img data-svg-load data-svg-colorable="true" src="images/logo.svg" />
@@ -159,16 +178,18 @@ SvgLoader finds all `<path>` and `<g>` elements in the svg file and set their `f
 ### SvgLoader.load
 
 ```js
-SvgLoader.load(url, attrs?);
+async SvgLoader.load(url, attrs?)
 ```
 
-Loads the svg provided in the url and returns it. This function is **asynchronous**.
+Loads the svg provided in the url then returns it. If a wrap option is provided, it will return the wrapper instead.
 
 #### attrs?
 
-Pass in attributes as you normally would when in an element like `style`, `class`, etc.
+Pass in attributes as you normally would when in an element like `style`, `class`, etc. This is also where you pass in options:
 
-Use the special attribute `colorable` to apply the `data-svg-colorable` attribute.
+<b>colorable</b>
+
+Makes the svg be able to be coloured using the `color` css property.
 
 ```js
 SvgLoader.load(url, {
@@ -176,3 +197,28 @@ SvgLoader.load(url, {
   colorable: true,
 });
 ```
+
+<b>wrap</b>
+
+Wraps the svg inside a wrapper element. Default is `div`.
+
+```js
+SvgLoader.load(url, {
+  ...
+  wrap: 'span',
+});
+```
+
+Passing in an empty string or `true` will still wrap the svg in `div`. Passing in `false` will not wrap the svg. (But why would you do that though?)
+
+## Logs
+
+### Version 1.1.0
+
+- Make colorable even without setting the attribute `data-svg-colorable` to true
+- Add options to `data-svg-load`
+  - wrap: wraps the svg inside a wrapper element.
+
+### Version 1.0.1 and 1.0.2
+
+Initial release.

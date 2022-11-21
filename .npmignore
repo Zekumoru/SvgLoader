@@ -6,6 +6,7 @@ src/
 .gitignore
 .prettierignore
 webpack.config.*
+*.sh
 
 # Logs
 logs
