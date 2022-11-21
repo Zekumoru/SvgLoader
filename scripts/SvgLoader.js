@@ -16,7 +16,7 @@ const imgs = document.querySelectorAll('img[data-svg-load]');
   const url = simplifyPath(img.src);
 
   const svg = createSvg(await extractSvg(url));
-  if (img.dataset.svgColorable === 'true') makeColorable(svg);
+  if (img.dataset.svgColorable !== undefined) makeColorable(svg);
 
   [...img.attributes].forEach((attr) => {
     attr = attr.name;
