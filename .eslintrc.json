@@ -22,6 +22,7 @@
     "max-len": "off",
     "no-continue": "off",
     "global-require": "off",
+    "no-restricted-syntax": "off",
     "brace-style": ["error", "stroustrup"]
   }
 }
