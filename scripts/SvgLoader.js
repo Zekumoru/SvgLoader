@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export default {
+const SvgLoader = {
   async load(url, attrs = {}) {
     let svg = createSvg(await extractSvg(url));
 
@@ -17,32 +17,37 @@ export default {
     Object.keys(attrs).forEach((key) => svg.setAttribute(key, attrs[key]));
     return svg;
   },
+  async reload() {
+    const imgs = document.querySelectorAll('img[data-svg-load]');
+    const promises = [];
+
+    for (const img of imgs) {
+      promises.push((async () => {
+        const url = simplifyPath(img.src);
+
+        let svg = createSvg(await extractSvg(url));
+        const options = extractOptions(img);
+
+        const isColorable = img.dataset.svgColorable !== undefined || Object.hasOwn(options, 'colorable');
+        if (isColorable) makeColorable(svg);
+
+        if (Object.hasOwn(options, 'wrap')) svg = wrap(svg, options.wrap);
+
+        passAttributes(img, svg);
+        img.insertAdjacentElement('beforebegin', svg);
+        img.remove();
+
+        return svg;
+      })());
+    }
+
+    return Promise.all(promises);
+  },
 };
 
-const imgs = document.querySelectorAll('img[data-svg-load]');
+export default SvgLoader;
 
-const promises = [];
-for (const img of imgs) {
-  promises.push((async () => {
-    const url = simplifyPath(img.src);
-
-    let svg = createSvg(await extractSvg(url));
-    const options = extractOptions(img);
-
-    const isColorable = img.dataset.svgColorable !== undefined || Object.hasOwn(options, 'colorable');
-    if (isColorable) makeColorable(svg);
-
-    if (Object.hasOwn(options, 'wrap')) svg = wrap(svg, options.wrap);
-
-    passAttributes(img, svg);
-    img.insertAdjacentElement('beforebegin', svg);
-    img.remove();
-
-    return svg;
-  })());
-}
-
-Promise.all(promises).then((svgs) => {
+SvgLoader.reload().then((svgs) => {
   document.body.dispatchEvent(new CustomEvent('DOMSvgLoaded', {
     bubbles: true,
     detail: svgs,
