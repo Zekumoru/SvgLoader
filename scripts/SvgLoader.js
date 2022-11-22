@@ -20,20 +20,33 @@ export default {
 };
 
 const imgs = document.querySelectorAll('img[data-svg-load]');
-[...imgs].forEach(async (img) => {
-  const url = simplifyPath(img.src);
 
-  let svg = createSvg(await extractSvg(url));
-  const options = extractOptions(img);
+const promises = [];
+for (const img of imgs) {
+  promises.push((async () => {
+    const url = simplifyPath(img.src);
 
-  const isColorable = img.dataset.svgColorable !== undefined || Object.hasOwn(options, 'colorable');
-  if (isColorable) makeColorable(svg);
+    let svg = createSvg(await extractSvg(url));
+    const options = extractOptions(img);
 
-  if (Object.hasOwn(options, 'wrap')) svg = wrap(svg, options.wrap);
+    const isColorable = img.dataset.svgColorable !== undefined || Object.hasOwn(options, 'colorable');
+    if (isColorable) makeColorable(svg);
 
-  passAttributes(img, svg);
-  img.insertAdjacentElement('beforebegin', svg);
-  img.remove();
+    if (Object.hasOwn(options, 'wrap')) svg = wrap(svg, options.wrap);
+
+    passAttributes(img, svg);
+    img.insertAdjacentElement('beforebegin', svg);
+    img.remove();
+
+    return svg;
+  })());
+}
+
+Promise.all(promises).then((svgs) => {
+  document.body.dispatchEvent(new CustomEvent('DOMSvgLoaded', {
+    bubbles: true,
+    detail: svgs,
+  }));
 });
 
 function createSvg(content) {
