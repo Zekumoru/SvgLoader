@@ -30,6 +30,10 @@ JavaScript:
 
 ```js
 import "@zekumoru-dev/svg-loader/SvgLoader";
+
+window.addEventListener("DOMSvgLoaded", () => {
+  // set click listeners for svgs here...
+});
 ```
 
 #### Loading svg
@@ -157,7 +161,7 @@ Makes the svg be able to be coloured using the `color` css property.
 
 Wraps the svg inside a wrapper element. Default is `div`.
 
-### <s>data-svg-colorable</s> <strong style="color: firebrick;">deprecated</strong>
+### <s>data-svg-colorable</s> <strong style="color: firebrick;">(deprecated)</strong>
 
 _This attribute is deprecated as of version 1.1.0 in favor of the new options value for the `data-svg-load` attribute._
 
@@ -170,6 +174,24 @@ If set to `true`, the CSS property `color` will take effect.
 SvgLoader finds all `<path>` and `<g>` elements in the svg file and set their `fill` and `stroke` attributes to `currentColor`, ignores if their value is `none`.
 
 > It is highly recommended to only use this attribute to one-coloured svg files.
+
+<br>
+
+## Events
+
+### DOMSvgLoaded
+
+Gets invoked when all svgs have been loaded, i.e., converted `data-svg-load` img elements to their svgs. This event contains all the svgs loaded in its `detail` property.
+
+The method `SvgLoader.reload` **does not** invoke this event.
+
+```js
+window.addEventListener("DOMSvgLoaded", (e) => {
+  const svgs = e.detail;
+
+  // some code...
+});
+```
 
 <br>
 
@@ -211,9 +233,26 @@ SvgLoader.load(url, {
 
 Passing in an empty string or `true` will still wrap the svg in `div`. Passing in `false` will not wrap the svg. (But why would you do that though?)
 
+### SvgLoader.reload
+
+```js
+async SvgLoader.reload()
+```
+
+Runs SvgLoader again to check convert `data-svg-load` img elements to svgs. Useful when a new HTML document is loaded.
+
+Returns a `Promise` which gets resolved when it has finished reloading. This promise contains the list of loaded svgs.
+
+> **Warning:** `SvgLoader.reload` **does not** invoke the `DOMSvgLoaded` event. Use the returned `Promise` instead.
+
 ## Logs
 
-### Version 1.1.0
+### Version 1.1.1
+
+- Add `DOMSvgLoaded` event
+- Add `reload` function
+
+### Version 1.1.0 (Unpublished)
 
 - Make colorable even without setting the attribute `data-svg-colorable` to true
 - Add options to `data-svg-load`
